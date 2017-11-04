@@ -5,6 +5,7 @@
 #include "Engine/Renderer/Renderer.hpp"
 #include "Engine/Renderer/3D/ForwardRenderer.hpp"
 #include "Engine/Renderer/3D/Camera3D.hpp"
+#include "Engine/Renderer/AABB2.hpp"
 
 TheGame* TheGame::instance = nullptr;
 
@@ -24,7 +25,7 @@ TheGame::~TheGame()
 void TheGame::InitializeMainCamera()
 {
     Camera3D* camera = ForwardRenderer::instance->GetMainCamera();
-    camera->m_updateFromInput = false;
+    camera->m_updateFromInput = true;
     camera->m_position = Vector3(30.0f, 30.0f, -10.0f);
     camera->LookAt(Vector3::ZERO);
 }
@@ -47,7 +48,6 @@ void TheGame::Update(float deltaSeconds)
     }
     
     ForwardRenderer::instance->Update(deltaSeconds);
-    ForwardRenderer::instance->GetMainCamera()->LookAt(Vector3::ZERO);
 }
 
 //-----------------------------------------------------------------------------------
@@ -55,13 +55,13 @@ void TheGame::Render() const
 {
     ENSURE_NO_MATRIX_STACK_SIDE_EFFECTS(Renderer::instance->m_viewStack);
     ENSURE_NO_MATRIX_STACK_SIDE_EFFECTS(Renderer::instance->m_projStack);
-    Begin3DPerspective();
+    Renderer::instance->ClearColor(RGBA::LIME);
+    Renderer::instance->ClearDepth();
+    Renderer::instance->BeginOrtho(1600, 900);
     {
-        Renderer::instance->ClearColor(RGBA::LIME);
-        ForwardRenderer::instance->Render();
-        RenderAxisLines();
+        Renderer::instance->DrawAABB(AABB2(Vector2(-100.0f), Vector2(100.0f)), RGBA::BLACK);
     }
-    End3DPerspective();
+    Renderer::instance->EndOrtho();
 }
 
 //-----------------------------------------------------------------------------------

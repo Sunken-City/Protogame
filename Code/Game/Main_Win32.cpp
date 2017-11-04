@@ -264,7 +264,6 @@ void Update()
 void Render()
 {
     TheGame::instance->Render();
-    UISystem::instance->Render();
     Console::instance->Render();
 
     SwapBuffers(g_displayDeviceContext);
