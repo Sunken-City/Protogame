@@ -23,6 +23,7 @@
 #include "Engine/UI/UISystem.hpp"
 #include <gl/GL.h>
 #include "ThirdParty/OpenGL/wglext.h"
+#include "Engine/Renderer/OpenGL/OGLRenderer.hpp"
 
 //-----------------------------------------------------------------------------------------------
 #define UNUSED(x) (void)(x);
@@ -285,7 +286,8 @@ void Initialize(HINSTANCE applicationInstanceHandle)
 {
     SetProcessDPIAware();
     CreateOpenGLWindow(applicationInstanceHandle);
-    Renderer::instance = new Renderer(Vector2Int(WINDOW_PHYSICAL_WIDTH, WINDOW_PHYSICAL_HEIGHT));
+    Renderer::instance = new OGLRenderer(Vector2Int(WINDOW_PHYSICAL_WIDTH, WINDOW_PHYSICAL_HEIGHT));
+    Renderer::instance->CreateDefaultResources();
     ForwardRenderer::instance = new ForwardRenderer();
     AudioSystem::instance = new AudioSystem();
     InputSystem::instance = new InputSystem(g_hWnd, 0, WINDOW_PHYSICAL_WIDTH, WINDOW_PHYSICAL_HEIGHT);
@@ -305,6 +307,7 @@ void EngineCleanup()
 //-----------------------------------------------------------------------------------------------
 void Shutdown()
 {
+    EngineCleanup();
     delete TheGame::instance;
     TheGame::instance = nullptr;
     delete UISystem::instance;
@@ -319,7 +322,6 @@ void Shutdown()
     ForwardRenderer::instance = nullptr;
     delete Renderer::instance;
     Renderer::instance = nullptr;
-    EngineCleanup();
 }
 
 //-----------------------------------------------------------------------------------------------
